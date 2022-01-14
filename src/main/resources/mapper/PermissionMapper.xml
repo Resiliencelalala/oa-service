@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.langsin.oa.mapper.PermissionMapper">
+    <select id="selectPermissionListByRoleId" resultType="com.langsin.oa.dto.PermissionDto">
+      select
+      m.id,
+      m.name,
+      m.type,
+      m.parent_id as parentId,
+      m.sort,
+      m.code
+      from r_permission m, r_role_permission rm
+       where rm.role_id = #{roleId} and m.id = rm.permission_id
+    </select>
+    <select id="selectPermsCodeByUserId" resultType="com.langsin.oa.dto.PermissionDto">
+    select m.* from r_permission m, r_user_backend u, r_user_role ur, r_role_permission rm
+  	where u.id = #{userId} and u.id = ur.user_id
+  	and ur.role_id = rm.role_id and rm.permission_id = m.id and m.type = 2 and m.code!=''
+    </select>
+    <select id="selectPermsButtonByUserId" resultType="com.langsin.oa.dto.PermissionDto">
+    select m.* from r_permission m, r_user_backend u, r_user_role ur, r_role_permission rm
+  	where u.id = #{userId} and u.id = ur.user_id
+  	and ur.role_id = rm.role_id and rm.permission_id = m.id and m.type = 2 and m.hidden= '0'
+    </select>
+</mapper>

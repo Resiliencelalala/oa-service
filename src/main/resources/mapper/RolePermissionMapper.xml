@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.langsin.oa.mapper.RolePermissionMapper">
+    <select id="selectPermissionIdByUserId" resultType="java.lang.Long">
+      SELECT rm.permission_id FROM
+       r_role_permission rm,r_user_role ur,r_user_backend u WHERE u.id = #{userId} AND u.id = ur.user_id AND rm.role_id = ur.role_id
+    </select>
+    <insert id="insertList" parameterType="java.util.List">
+        insert into r_role_permission
+        (role_id, permission_id)
+        values
+        <foreach collection="list" item="data" index="index"
+                 separator=",">
+            (
+            #{data.roleId},#{data.permissionId}
+            )
+        </foreach>
+    </insert>
+    <delete id="delByRoleId">
+    delete from r_role_permission where role_id=#{roleId}
+  </delete>
+
+</mapper>

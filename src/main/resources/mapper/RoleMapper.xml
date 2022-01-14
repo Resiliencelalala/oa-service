@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.langsin.oa.mapper.RoleMapper">
+    <select id="selectByUserId" resultType="com.langsin.oa.dto.RoleDto">
+        select role.* from r_role role
+        left join r_user_role ur
+        on role.id = ur.role_id
+        where ur.user_id = #{userId}
+    </select>
+</mapper>

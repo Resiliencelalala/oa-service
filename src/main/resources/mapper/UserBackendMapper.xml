@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.langsin.oa.mapper.UserBackendMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.langsin.oa.dto.UserBackendDto">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="real_name" property="realName"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="password" property="password"/>
+        <result column="salt" property="salt"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <collection property="roleDtos" ofType="com.langsin.oa.dto.RoleDto"
+                    select="com.langsin.oa.mapper.RoleMapper.selectByUserId" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="selectUserAndPage" resultMap="BaseResultMap">
+        SELECT
+        `user`.*
+        FROM
+        r_user_backend AS `user`
+       where 1=1
+        <if test="realName != null and realName != ''">
+            and `user`.real_name LIKE CONCAT('%',#{realName},'%')
+        </if>
+        ORDER BY `user`.create_time DESC
+    </select>
+
+    <select id="selectUserByPermission" resultType="com.langsin.oa.dto.UserBackendSingleDto">
+        SELECT `u`.* FROM r_user_backend AS `u`
+        INNER JOIN r_user_role ur ON u.`id`=ur.`user_id`
+        INNER JOIN r_role r ON ur.`role_id`=r.`id`
+        INNER JOIN r_role_permission rp ON r.`id`=rp.`role_id`
+        INNER JOIN r_permission p ON rp.`permission_id`=p.`id`
+        WHERE p.`code`=#{permissionCode}
+        and `u`.status=1
+        and `r`.code=#{roleCode}
+    </select>
+
+    <update id="updateByUserId" >
+         UPDATE r_user_backend SET
+        real_name=#{query.realName},
+        phone=#{query.phone},
+        email = #{query.email},
+        update_time = #{query.updateTime},
+        status=#{query.status}
+        WHERE
+        id=#{query.id}
+    </update>
+    <update id="updateUserByStatus" >
+         UPDATE r_user_backend SET
+        status=#{query.status}
+        WHERE
+        id=#{query.userId}
+    </update>
+
+    <update id="updateUserByPassword" >
+         UPDATE r_user_backend SET
+        password=#{password},
+        salt=#{salt}
+        WHERE
+        id=#{id}
+    </update>
+</mapper>
